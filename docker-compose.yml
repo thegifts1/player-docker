@@ -1,0 +1,36 @@
+version: '3.1'
+
+services:
+  web:
+    build: ./web
+    environment:
+      - APACHE_RUN_USER=#1000
+    volumes:
+      - ${APP_PATH_HOST}:${APP_PATH_CONTAINER}
+      - ./php:/usr/local/etc/php/
+    ports:
+      - 7080:80
+    working_dir: ${APP_PATH_CONTAINER}
+
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+    volumes:
+      - ${DB_PATH_HOST}:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+
+  composer:
+    image: composer:2.5.8
+    volumes:
+      - ${APP_PATH_HOST}:${APP_PATH_CONTAINER}
+    working_dir: ${APP_PATH_CONTAINER}
+    command: composer install
