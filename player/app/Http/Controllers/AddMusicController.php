@@ -9,7 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Facades\DB;
 
 class AddMusicController extends Controller
 {
@@ -31,7 +31,7 @@ class AddMusicController extends Controller
             $getID3 = new \getID3();
             $getID3->encoding = 'UTF-8';
 
-            $check = Music::query()->get(['name', 'track_name']);
+            $check = DB::table('music')->where('name', $user['name'])->get(['track_name']);
             $check_count = count($check);
 
             for ($i = 0; $i < $file_count; $i++) {
@@ -41,16 +41,15 @@ class AddMusicController extends Controller
                 
                 $file_name = $request->file('fileUpload')[$i]->getClientOriginalName();
 
-                for ($i2 = 0; $i2 < $check_count; $i2++) {
-                    if ($check[$i2]['name'] == $user['name'] && $check[$i2]['track_name'] == $file_name) {
-                        return redirect()->route('addMusic.index')->withErrors('You have already added a file with this name: ' . $file_name);
-                    }
-                }
-
                 $extension = pathinfo($file_name = $request->file('fileUpload')[$i]->getClientOriginalName(), PATHINFO_EXTENSION);
-
                 if (!in_array($extension, $allowedExtensions)) {
                     return redirect()->route('addMusic.index')->withErrors('Uploading files with this permission is prohibited');
+                }
+
+                for ($i2 = 0; $i2 < $check_count; $i2++) {
+                    if ($check[$i2]->track_name == $file_name) {
+                        return redirect()->route('addMusic.index')->withErrors('You have already added a file with this name: ' . $file_name);
+                    }
                 }
 
                 $dbSong = Music::query()->create([
@@ -60,7 +59,7 @@ class AddMusicController extends Controller
                     'size' => ($ThisFileInfo['filesize'] / 1024) / 1024,
                 ]);
 
-                Storage::disk('local')->putFileAs(
+                Storage::disk('public')->putFileAs(
                     'UsersMusic/' . $user['name'],
                     $uploadedFile,
                     $file_name,

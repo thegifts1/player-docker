@@ -1,32 +1,51 @@
 version: '3.1'
 
 services:
-  web:
-    build: ./web
-    environment:
-      - APACHE_RUN_USER=#1000
-    volumes:
-      - ${APP_PATH_HOST}:${APP_PATH_CONTAINER}
-      - ./php:/usr/local/etc/php/
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
     ports:
-      - 7080:80
-    working_dir: ${APP_PATH_CONTAINER}
+      - "7080:80"
+    networks:
+      - internal
+    volumes:
+      - ./player/:/var/www/html/
+      - ./logs/nginx:/var/log/nginx/
+    container_name: nginx
+
+  php:
+    build:
+      context: .
+      dockerfile: php/Dockerfile
+    networks:
+      - internal
+    volumes:
+      - ./player/:/var/www/html/
+      - ./logs/php.log:/var/log/fpm-php.www.log
+    container_name: php
 
   db:
-    image: mysql
+    image: mysql:8.1.0
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 123
     volumes:
       - ${DB_PATH_HOST}:/var/lib/mysql
-
-  phpmyadmin:
-    image: phpmyadmin
+    networks:
+      - internal
+    container_name: db
+    
+  adminer:
+    build:
+      context: .
+      dockerfile: adminer/Dockerfile
     restart: always
     ports:
-      - 8080:80
-    environment:
-      - PMA_ARBITRARY=1
+      - 8080:8080
+    networks:
+      - internal
+    container_name: adminer
 
   composer:
     image: composer:2.5.8
@@ -34,3 +53,18 @@ services:
       - ${APP_PATH_HOST}:${APP_PATH_CONTAINER}
     working_dir: ${APP_PATH_CONTAINER}
     command: composer install
+    container_name: composer
+
+  node:
+    image: node:18.16.0-alpine
+    volumes:
+      - ./player/:/var/www/html/
+    working_dir: ${APP_PATH_CONTAINER}
+    command: >
+      sh -c "npm install &&
+             npm run build"
+    container_name: node
+
+networks:
+  internal:
+    driver: bridge
