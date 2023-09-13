@@ -25,7 +25,7 @@ class RegisterController extends Controller
             'password' => ['required', 'string', 'min:7', 'max:200', 'confirmed'],
         ]);
          
-        $user = User::query()->create([
+        User::query()->create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => $validated['password'],

@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use App\Models\Guest;
-use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -19,7 +18,6 @@ class SetLocale
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = new User;
         $user = Auth::user();
 
         if (isset($user)) {

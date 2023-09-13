@@ -31,7 +31,6 @@ class SettingsController extends Controller
 
     public function changeThemeForAuth(Request $request)
     {
-        $user = new User;
         $user = Auth::user();
 
         if (isset($request['darkTheme'])) {
@@ -58,7 +57,6 @@ class SettingsController extends Controller
 
     public function changeLangForAuth(Request $request)
     {
-        $user = new User;
         $user = Auth::user();
 
         if ($request['lang'] == 'Rus') {

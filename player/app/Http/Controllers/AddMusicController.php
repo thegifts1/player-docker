@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 require_once '/var/www/html/app/getID3/getid3/getid3.php';
 
 use App\Models\Music;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -21,8 +20,7 @@ class AddMusicController extends Controller
     public function store(Request $request)
     {
         if (!empty($request['fileUpload'])) {
-            $user = new User;
-            $user->name = Auth::user()->name;
+            $user['name'] = Auth::user()->name;
 
             $allowedExtensions = ['mp3', 'ogg', 'wav'];
 

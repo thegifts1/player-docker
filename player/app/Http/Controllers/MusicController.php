@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -13,7 +12,6 @@ class MusicController extends Controller
         $songs = [];
         $counter = 0;
 
-        $user = new User;
         $user = Auth::user();
 
         if (isset($user)) {

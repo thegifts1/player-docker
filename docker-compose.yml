@@ -35,7 +35,7 @@ services:
     networks:
       - internal
     container_name: db
-    
+
   adminer:
     build:
       context: .
@@ -61,9 +61,28 @@ services:
       - ./player/:/var/www/html/
     working_dir: ${APP_PATH_CONTAINER}
     command: >
-      sh -c "npm install &&
-             npm run build"
+      sh -c "chmod -R 777 storage &&
+            npm install &&
+            npm run build"
     container_name: node
+
+  redis:
+    image: redis:7.2.1-alpine
+    hostname: redis
+    networks:
+      - internal
+    container_name: redis
+
+  phpRedisAdmin:
+    image: erikdubbelboer/phpredisadmin
+    environment:
+      - REDIS_1_HOST=redis
+      - REDIS_1_PORT=6379
+    ports:
+      - 80:80
+    networks:
+      - internal
+    container_name: phpRedisAdmin
 
 networks:
   internal:
