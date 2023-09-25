@@ -477,6 +477,25 @@ p {
     color: #e0e0e0;
 }
 
+.login_help_link:hover {
+    opacity: 50%;
+}
+
+.login_link_div {
+    margin: 10px;
+}
+
+.login_link {
+    font-size: 20px;
+    color: #e0e0e0;
+
+    text-decoration: none;
+}
+
+.login_link:hover {
+    opacity: 50%;
+}
+
 :-moz-placeholder {
     color: #c9c9c9 !important;
     font-size: 13px;

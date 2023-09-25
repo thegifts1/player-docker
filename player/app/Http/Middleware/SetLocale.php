@@ -2,11 +2,11 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Guest;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
 class SetLocale
@@ -25,19 +25,19 @@ class SetLocale
 
             return $next($request);
         } else {
-            $guests = Guest::query()->get(['ip_adress', 'lang']);
+            if (Cache::get($_SERVER['REMOTE_ADDR'])) {
+                App::setLocale(Cache::get($_SERVER['REMOTE_ADDR'] . '-lang'));
 
-            foreach ($guests as $guest) {
-                if ($guest['ip_adress'] == $_SERVER['REMOTE_ADDR']) {
-                    App::setLocale($guest['lang']);
+                return $next($request);
+            } else {
+                Cache::put($_SERVER['REMOTE_ADDR'], $_SERVER['REMOTE_ADDR'], now()->addYears(10));
+                Cache::put($_SERVER['REMOTE_ADDR'] . '-lang', App::getLocale(), now()->addYears(10));
+                Cache::put($_SERVER['REMOTE_ADDR'] . '-darkTheme', 0, now()->addYears(10));
 
-                    return $next($request);
-                }
+                App::setLocale(Cache::get($_SERVER['REMOTE_ADDR'] . '-lang'));
+
+                return $next($request);
             }
-            
-            Guest::query()->create([
-                'ip_adress' => $_SERVER['REMOTE_ADDR'],
-            ]);
         }
 
         return $next($request);

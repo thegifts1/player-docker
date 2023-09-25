@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-require_once '/var/www/html/app/getID3/getid3/getid3.php';
+require_once '/var/www/vhosts/localhost/html/app/getID3/getid3/getid3.php';
 
 use App\Models\Music;
 use Illuminate\Http\Request;
@@ -24,19 +24,16 @@ class AddMusicController extends Controller
 
             $allowedExtensions = ['mp3', 'ogg', 'wav'];
 
-            $file_count = count($request->file('fileUpload'));
-
             $getID3 = new \getID3();
             $getID3->encoding = 'UTF-8';
 
             $check = DB::table('music')->where('name', $user['name'])->get(['track_name']);
-            $check_count = count($check);
 
-            for ($i = 0; $i < $file_count; $i++) {
+            for ($i = 0; $i < count($request->file('fileUpload')); $i++) {
                 $uploadedFile = $request->file('fileUpload')[$i];
 
                 $ThisFileInfo = $getID3->analyze($uploadedFile);
-                
+                                
                 $file_name = $request->file('fileUpload')[$i]->getClientOriginalName();
 
                 $extension = pathinfo($file_name = $request->file('fileUpload')[$i]->getClientOriginalName(), PATHINFO_EXTENSION);
@@ -44,13 +41,13 @@ class AddMusicController extends Controller
                     return redirect()->route('addMusic.index')->withErrors('Uploading files with this permission is prohibited');
                 }
 
-                for ($i2 = 0; $i2 < $check_count; $i2++) {
+                for ($i2 = 0; $i2 < count($check); $i2++) {
                     if ($check[$i2]->track_name == $file_name) {
                         return redirect()->route('addMusic.index')->withErrors('You have already added a file with this name: ' . $file_name);
                     }
                 }
 
-                $dbSong = Music::query()->create([
+                Music::query()->create([
                     'name' => $user['name'],
                     'track_name' => $file_name,
                     'duration' => $ThisFileInfo['playtime_string'],

@@ -4,9 +4,9 @@ use App\Http\Controllers\AddMusicController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
-use App\Http\Controllers\MailController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,12 +36,23 @@ Route::post('/themeForAuth', [SettingsController::class, 'changeThemeForAuth'])-
 Route::post('/langNotAuth', [SettingsController::class, 'changeLangNotAuth'])->name('settings.changeLangNotAuth');
 Route::post('/langForAuth', [SettingsController::class, 'changeLangForAuth'])->name('settings.changeLangForAuth');
 
-Route::get('/mail', [MailController::class, 'TestMail'])->name('emails.TestMail');
+Route::get('/login', [LoginController::class, 'index'])->name('login.index');
+
+Route::get('/loginName', [LoginController::class, 'loginName'])->name('login.loginName');
+Route::post('/loginName', [LoginController::class, 'store'])->name('login.store');
+
+Route::get('/loginEmail', [LoginController::class, 'loginEmail'])->name('login.loginEmail');
+Route::post('/loginEmail', [LoginController::class, 'loginEmailStore'])->name('login.loginEmailStore');
+
+Route::get('login/emailAuthenticate/{token}', [
+    'as' => 'login.emailCodeConfirm',
+    'uses' => 'App\Http\Controllers\LoginController@authenticateEmail'
+]);
 
 Route::get('/logout', [LogoutController::class, 'store'])->name('logout.store');
 
-Route::get('/login', [LoginController::class, 'index'])->name('login.index');
-Route::post('/login', [LoginController::class, 'store'])->name('login.store');
-
 Route::get('/register', [RegisterController::class, 'index'])->name('register.index');
 Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
+
+Route::get('/search', [SearchController::class, 'GetSearch'])->name('GetSearch.index');
+Route::post('/search', [SearchController::class, 'Search'])->name('Search.store');

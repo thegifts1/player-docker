@@ -1,29 +1,41 @@
 version: '3.1'
 
 services:
-  nginx:
+  # nginx:
+  #   build:
+  #     context: .
+  #     dockerfile: nginx/Dockerfile
+  #   ports:
+  #     - "7080:80"
+  #   networks:
+  #     - internal
+  #   volumes:
+  #     - ./player/:/var/www/html/
+  #     - ./logs/nginx:/var/log/nginx/
+  #   container_name: nginx
+
+  openlitespeed:
     build:
       context: .
-      dockerfile: nginx/Dockerfile
+      dockerfile: openlitespeed/Dockerfile
     ports:
       - "7080:80"
     networks:
       - internal
     volumes:
-      - ./player/:/var/www/html/
-      - ./logs/nginx:/var/log/nginx/
-    container_name: nginx
+      - ./player/:/var/www/vhosts/localhost/html
+    container_name: openlitespeed
 
-  php:
-    build:
-      context: .
-      dockerfile: php/Dockerfile
-    networks:
-      - internal
-    volumes:
-      - ./player/:/var/www/html/
-      - ./logs/php.log:/var/log/fpm-php.www.log
-    container_name: php
+  # php:
+  #   build:
+  #     context: .
+  #     dockerfile: php/Dockerfile
+  #   networks:
+  #     - internal
+  #   volumes:
+  #     - ./player/:/var/www/html/
+  #     - ./logs/php.log:/var/log/fpm-php.www.log
+  #   container_name: php
 
   db:
     image: mysql:8.1.0
@@ -74,7 +86,7 @@ services:
     container_name: redis
 
   phpRedisAdmin:
-    image: erikdubbelboer/phpredisadmin
+    image: erikdubbelboer/phpredisadmin:1.19
     environment:
       - REDIS_1_HOST=redis
       - REDIS_1_PORT=6379

@@ -11,6 +11,7 @@ export default defineConfig({
             'resources/css/lightTheme.css',
             'resources/css/darkTheme.css',
             'resources/css/plyrDarkTheme.css',
+            'resources/css/plyrLightTheme.css',
             'resources/js/app.js',
         ])
     ],

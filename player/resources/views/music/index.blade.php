@@ -34,11 +34,11 @@
             <?= $nowPlaying ?>
         </div>
         @if (Auth::user()->darkTheme == 1)
-            <img onclick="past()" class="arrow" src="storage/img/svg/right-arrow-white.svg" alt="left">
-            <img onclick="next()" class="arrow" src="storage/img/svg/left-arrow-white.svg" alt="right">
+            <img onclick="past()" class="arrow" src="img/svg/right-arrow-white.svg" alt="left">
+            <img onclick="next()" class="arrow" src="img/svg/left-arrow-white.svg" alt="right">
         @else
-            <img onclick="past()" class="arrow" src="storage/img/svg/left-arrow-black.svg" alt="left">
-            <img onclick="next()" class="arrow" src="storage/img/svg/right-arrow-black.svg" alt="right">
+            <img onclick="past()" class="arrow" src="img/svg/left-arrow-black.svg" alt="left">
+            <img onclick="next()" class="arrow" src="img/svg/right-arrow-black.svg" alt="right">
         @endif
         
         <div id="player_container">
@@ -74,7 +74,7 @@
             @if (Auth::user()->darkTheme == 1)
                 @vite(['resources/css/plyrDarkTheme.css'])
             @else
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.7.8/plyr.min.css">
+                @vite(['resources/css/plyrLightTheme.css'])
             @endif
         @endsection
 

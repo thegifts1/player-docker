@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('guests', function (Blueprint $table) {
-            $table->string('ip_adress')->primary();
-            $table->string('lang')->default('en');
-            $table->string('darkTheme')->default(false);
-
+        Schema::create('email_logins', function (Blueprint $table) {
+            $table->string('email')->index();
+            $table->string('token')->index();
             $table->timestamps();
         });
     }
@@ -25,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('guests');
+        Schema::dropIfExists('email_logins');
     }
 };

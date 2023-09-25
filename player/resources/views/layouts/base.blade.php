@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 @guest
-    @php
-        $guest_ip = $_SERVER['REMOTE_ADDR'];
-        $guest = App\Models\Guest::query()
-            ->where('ip_adress', "$guest_ip")
-            ->get(['darkTheme', 'lang']);
-    @endphp
-
-    <html lang="{{ $guest[0]["lang"] }}">
+    <html lang="{{ Cache::get($_SERVER['REMOTE_ADDR'] . '-lang') }}">
 @endguest
 
 @auth
@@ -20,12 +13,12 @@
 
     <title>@yield('title', config('app.name'))</title>
 
-    <link rel="icon" href="storage/img/svg/headphones.svg" type="image/svg+xml">
+    <link rel="icon" href="img/svg/headphones.svg" type="image/svg+xml">
 
     @yield('plyr.css')
 
     @guest
-        @if ($guest[0]['darkTheme'] == 1)
+        @if (Cache::get($_SERVER['REMOTE_ADDR'] . '-darkTheme') == 1)
             @vite(['resources/css/darkTheme.css'])
         @else
             @vite(['resources/css/lightTheme.css'])
@@ -54,6 +47,8 @@
     </div>
 
     @vite(['resources/js/app.js'])
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 
     @yield('plyr.js')
     @yield('js')

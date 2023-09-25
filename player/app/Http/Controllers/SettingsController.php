@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Guest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class SettingsController extends Controller
 {
@@ -15,15 +15,11 @@ class SettingsController extends Controller
     }
 
     public function changeThemeNotAuth(Request $request)
-    {
-        $guest_ip = $_SERVER['REMOTE_ADDR'];
-
+    {        
         if (isset($request['darkTheme'])) {
-            Guest::query()->where('ip_adress', "$guest_ip")->update(['darkTheme' => 1]);
+            Cache::put($_SERVER['REMOTE_ADDR'] . '-darkTheme', 1, now()->addYears(30));
         } else if (isset($request['lightTheme'])) {
-            Guest::query()->where('ip_adress', "$guest_ip")->update(['darkTheme' => 0]);
-        } else {
-            return redirect()->back()->withErrors('Something went wrong');
+            Cache::put($_SERVER['REMOTE_ADDR'] . '-darkTheme', 0, now()->addYears(30));
         }
 
         return redirect()->back();
@@ -44,12 +40,10 @@ class SettingsController extends Controller
 
     public function changeLangNotAuth(Request $request)
     {
-        $guest_ip = $_SERVER['REMOTE_ADDR'];
-
         if ($request['lang'] == 'Rus') {
-            Guest::query()->where('ip_adress', "$guest_ip")->update(['lang' => 'ru']);
+            Cache::put($_SERVER['REMOTE_ADDR'] . '-lang', 'ru', now()->addYears(30));
         } else if ($request['lang'] == 'Eng') {
-            Guest::query()->where('ip_adress', "$guest_ip")->update(['lang' => 'en']);
+            Cache::put($_SERVER['REMOTE_ADDR'] . '-lang', 'en', now()->addYears(30));
         }
 
         return redirect()->back();
